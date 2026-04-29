@@ -190,4 +190,13 @@ All colors MUST be HSL.
     100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
   }
   .animate-popup-in { animation: popup-in 0.4s cubic-bezier(.4,1.4,.6,1) forwards; }
+
+  @keyframes arm-raise-left {
+    0% { transform: rotate(20deg) scaleX(0.6); opacity: 0; }
+    100% { transform: rotate(-35deg) scaleX(1); opacity: 1; }
+  }
+  @keyframes arm-raise-right {
+    0% { transform: rotate(-20deg) scaleX(0.6); opacity: 0; }
+    100% { transform: rotate(35deg) scaleX(1); opacity: 1; }
+  }
 }
