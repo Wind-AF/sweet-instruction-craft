@@ -366,7 +366,7 @@ const Penalties = () => {
 
         {/* Goleiro */}
         <div
-          className="absolute z-20"
+          className={`absolute z-20 ${phase === "shooting" || phase === "result" ? "animate-keeper-dive" : ""}`}
           style={{
             left: `${KEEPER_POSE[keeperSide].x}%`,
             top: "60%",
@@ -375,9 +375,27 @@ const Penalties = () => {
             transform: `translate(-50%, -50%) rotate(${KEEPER_POSE[keeperSide].rot}deg)`,
             transition: "left 380ms cubic-bezier(.4,1.4,.6,1), transform 380ms ease-out",
             transformOrigin: "50% 80%",
+            ["--keeper-rot" as any]: `${KEEPER_POSE[keeperSide].rot}deg`,
           }}
         >
-          <img src={goalkeeper} alt="" aria-hidden="true" className="w-full h-full object-contain object-bottom select-none" draggable={false} />
+          <img
+            src={goalkeeper}
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-contain object-bottom select-none"
+            draggable={false}
+            style={{
+              transform:
+                (phase === "shooting" || phase === "result")
+                  ? `scaleX(1.35) scaleY(1.1)`
+                  : "scale(1)",
+              transformOrigin: "50% 70%",
+              transition: "transform 320ms cubic-bezier(.4,1.4,.6,1)",
+              filter: (phase === "shooting" || phase === "result")
+                ? "drop-shadow(0 4px 6px rgba(0,0,0,0.4))"
+                : "none",
+            }}
+          />
         </div>
 
         {/* Bola voando (apenas durante chute/resultado) */}
@@ -410,37 +428,6 @@ const Penalties = () => {
               flash === "goal" ? "animate-goal-flash" : "animate-miss-flash"
             }`}
           />
-        )}
-
-        {/* Banner de resultado */}
-        {phase === "result" && (
-          <div className="absolute left-1/2 -translate-x-1/2 -bottom-[120%] z-50 flex justify-center pointer-events-none w-[78%] max-w-[280px]">
-            <div className="w-full rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-[#0b1f3a] text-center">
-              <div className="px-4 pt-3 pb-2 border-b border-white/10">
-                <p className="text-[10px] font-bold tracking-[0.18em] text-white/80 uppercase">
-                  Copa do Mundo FIFA
-                </p>
-                <p
-                  className={`font-display text-4xl font-extrabold leading-none mt-1.5 ${
-                    flash === "goal" ? "text-white" : "text-red-400"
-                  }`}
-                  style={{ letterSpacing: "0.02em" }}
-                >
-                  {flash === "goal" ? "GOOOL!" : "DEFENDEU!"}
-                </p>
-              </div>
-              <div className="px-4 py-3">
-                <p className="text-[9px] font-bold tracking-[0.18em] text-white/70 uppercase mb-1">
-                  {flash === "goal" ? "Prêmio na carteira" : "Sem prêmio"}
-                </p>
-                <p className="font-display text-2xl font-extrabold tabular-nums text-yellow-400">
-                  {flash === "goal" && floatPrize !== null
-                    ? `R$ ${floatPrize.toFixed(2).replace(".", ",")}`
-                    : "R$ 0,00"}
-                </p>
-              </div>
-            </div>
-          </div>
         )}
 
         {/* Valor flutuante */}
@@ -493,6 +480,40 @@ const Penalties = () => {
             <p className="text-yellow-300 text-[11px] font-bold uppercase tracking-wider">
               Toque no gol para chutar
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Banner de resultado — cobre o batedor, no centro da tela */}
+      {phase === "result" && (
+        <div
+          className="absolute left-1/2 top-1/2 z-[60] pointer-events-none w-[82%] max-w-[320px] animate-popup-in"
+          style={{ transform: "translate(-50%, -50%)" }}
+        >
+          <div className="w-full rounded-2xl overflow-hidden shadow-2xl border border-white/15 bg-[#0b1f3a] text-center">
+            <div className="px-5 pt-4 pb-3 border-b border-white/10">
+              <p className="text-[10px] font-bold tracking-[0.18em] text-white/80 uppercase">
+                Copa do Mundo FIFA
+              </p>
+              <p
+                className={`font-display text-5xl font-extrabold leading-none mt-2 ${
+                  flash === "goal" ? "text-white" : "text-red-400"
+                }`}
+                style={{ letterSpacing: "0.02em" }}
+              >
+                {flash === "goal" ? "GOOOL!" : "DEFENDEU!"}
+              </p>
+            </div>
+            <div className="px-5 py-4">
+              <p className="text-[10px] font-bold tracking-[0.18em] text-white/70 uppercase mb-1.5">
+                {flash === "goal" ? "Prêmio na carteira" : "Sem prêmio"}
+              </p>
+              <p className="font-display text-3xl font-extrabold tabular-nums text-yellow-400">
+                {flash === "goal" && floatPrize !== null
+                  ? `R$ ${floatPrize.toFixed(2).replace(".", ",")}`
+                  : "R$ 0,00"}
+              </p>
+            </div>
           </div>
         </div>
       )}
