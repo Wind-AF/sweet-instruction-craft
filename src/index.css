@@ -144,15 +144,15 @@ All colors MUST be HSL.
   .animate-hint-pulse { animation: hint-pulse 1.6s ease-in-out infinite; }
 
   @keyframes runup {
-    0% { transform: translate(-50%, 0) scale(1); }
-    100% { transform: translate(-50%, -28px) scale(0.92); }
+    0% { transform: translateX(-6%) translateY(0) scale(1); }
+    100% { transform: translateX(-6%) translateY(-18px) scale(0.97); }
   }
   .animate-runup { animation: runup 0.45s ease-in forwards; }
 
   @keyframes kick-leg {
-    0% { transform: translate(-50%, -28px) scale(0.92) rotate(0deg); }
-    50% { transform: translate(-50%, -34px) scale(0.94) rotate(-12deg); }
-    100% { transform: translate(-50%, -30px) scale(0.92) rotate(8deg); }
+    0% { transform: translateX(-6%) translateY(-18px) scale(0.97) rotate(0deg); }
+    50% { transform: translateX(-6%) translateY(-22px) scale(0.99) rotate(-8deg); }
+    100% { transform: translateX(-6%) translateY(-20px) scale(0.97) rotate(6deg); }
   }
   .animate-kick-leg { animation: kick-leg 0.35s ease-out forwards; }
 
