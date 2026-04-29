@@ -219,42 +219,43 @@ const Penalties = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mb-5">
-            <div className="bg-emerald-900/60 border border-emerald-700/50 rounded-2xl p-4">
-              <p className="text-emerald-300/80 text-[11px] font-semibold uppercase tracking-wider mb-1">
-                Gols
-              </p>
-              <p className="font-display text-3xl font-bold text-yellow-400">
-                {goals}/{TOTAL_KICKS}
-              </p>
-            </div>
-            <div className="bg-emerald-900/60 border border-emerald-700/50 rounded-2xl p-4">
-              <p className="text-emerald-300/80 text-[11px] font-semibold uppercase tracking-wider mb-1">
-                Média/gol
-              </p>
-              <p className="font-display text-3xl font-bold text-yellow-400">
-                R$ {goals ? (balance / goals).toFixed(2).replace(".", ",") : "0,00"}
-              </p>
-            </div>
+          <div className="rounded-2xl border border-emerald-700/50 bg-emerald-900/40 p-5 mb-5">
+            <h3 className="font-display text-lg font-bold text-white mb-3">Resumo da partida</h3>
+            <ul className="divide-y divide-emerald-800/40">
+              {history.map((g, i) => (
+                <li key={i} className="flex items-center justify-between py-1.5">
+                  <span className="text-emerald-100/90 text-sm">Pênalti {i + 1}</span>
+                  <span
+                    className={`text-xs font-extrabold tracking-wider ${
+                      g ? "text-emerald-400" : "text-red-400"
+                    }`}
+                  >
+                    {g ? "GOL" : "DEFENDIDO"}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div className="bg-yellow-400/10 border border-yellow-400/30 rounded-2xl p-4 mb-5">
-            <p className="text-yellow-200 text-sm font-semibold leading-relaxed">
-              Boa, {playerName}! Seu saldo está pronto para resgate via PIX.
+          <div className="rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-4 mb-5">
+            <h4 className="font-display text-base font-bold text-yellow-300 mb-1">Próxima etapa</h4>
+            <p className="text-emerald-100/90 text-sm leading-relaxed">
+              {playerName}, seu saldo de R$ {balance.toFixed(2).replace(".", ",")} foi registrado.
+              Continue para ver as opções de resgate via PIX.
             </p>
           </div>
 
           <button
-            onClick={() => navigate("/jogar")}
-            className="mb-3 w-full rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 py-3.5 text-[15px] font-bold text-emerald-950 shadow-md hover:from-amber-300 hover:to-yellow-300 active:scale-[0.99] transition flex items-center justify-center gap-2"
+            onClick={() => navigate("/resgate")}
+            className="mb-3 w-full rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-400 py-4 text-[15px] font-bold text-emerald-950 shadow-md hover:from-amber-300 hover:to-yellow-300 active:scale-[0.99] transition flex items-center justify-center gap-2"
           >
-            Resgatar saldo via PIX <ArrowRight className="w-4 h-4" />
+            Continuar para o resgate <ArrowRight className="w-4 h-4" />
           </button>
           <button
             onClick={playAgain}
-            className="w-full bg-emerald-900/50 border border-emerald-600/50 hover:bg-emerald-900/70 active:scale-[0.98] transition text-emerald-100 font-bold text-sm py-3.5 rounded-2xl"
+            className="w-full bg-emerald-900/50 border border-emerald-600/50 hover:bg-emerald-900/70 active:scale-[0.98] transition text-emerald-100 font-bold text-sm py-4 rounded-2xl"
           >
-            Jogar de novo
+            ↻ Jogar novamente
           </button>
         </div>
       </div>
