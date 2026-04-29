@@ -385,44 +385,6 @@ const Penalties = () => {
             className="w-full h-full object-contain object-bottom select-none"
             draggable={false}
           />
-
-          {/* Braços/luvas que aparecem esticados em todo chute */}
-          {(phase === "runup" || phase === "shooting" || phase === "result") && (
-            <>
-              {/* Braço esquerdo */}
-              <div
-                className="absolute pointer-events-none"
-                style={{
-                  left: "8%",
-                  top: "18%",
-                  width: "32%",
-                  height: "10%",
-                  background: "linear-gradient(90deg, hsl(35 45% 70%) 0%, hsl(35 45% 65%) 70%, hsl(48 96% 55%) 70%, hsl(48 96% 50%) 100%)",
-                  borderRadius: "6px",
-                  transform: "rotate(-35deg)",
-                  transformOrigin: "100% 50%",
-                  animation: "arm-raise-left 0.32s cubic-bezier(.4,1.4,.6,1) forwards",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.35)",
-                }}
-              />
-              {/* Braço direito */}
-              <div
-                className="absolute pointer-events-none"
-                style={{
-                  right: "8%",
-                  top: "18%",
-                  width: "32%",
-                  height: "10%",
-                  background: "linear-gradient(270deg, hsl(35 45% 70%) 0%, hsl(35 45% 65%) 70%, hsl(48 96% 55%) 70%, hsl(48 96% 50%) 100%)",
-                  borderRadius: "6px",
-                  transform: "rotate(35deg)",
-                  transformOrigin: "0% 50%",
-                  animation: "arm-raise-right 0.32s cubic-bezier(.4,1.4,.6,1) forwards",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.35)",
-                }}
-              />
-            </>
-          )}
         </div>
 
         {/* Bola voando (apenas durante chute/resultado) */}
