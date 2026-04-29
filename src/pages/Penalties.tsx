@@ -282,7 +282,7 @@ const Penalties = () => {
         src={crowd}
         alt=""
         aria-hidden="true"
-        className="absolute inset-x-0 top-[6%] h-[16%] w-full object-cover object-center opacity-80 z-[1]"
+        className="absolute inset-x-0 top-[4%] h-[22%] w-full object-cover object-center opacity-70 brightness-[0.55] z-[1]"
         draggable={false}
       />
 
@@ -291,7 +291,7 @@ const Penalties = () => {
         src={sponsorHoardings}
         alt=""
         aria-hidden="true"
-        className="absolute inset-x-0 top-[22%] h-[6%] w-full object-cover object-center z-[2]"
+        className="absolute inset-x-0 top-[26%] h-[8%] w-full object-contain object-center z-[2]"
         draggable={false}
       />
 
