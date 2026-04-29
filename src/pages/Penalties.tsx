@@ -6,6 +6,7 @@ import grass from "@/assets/grass-field.png";
 import crowd from "@/assets/crowd.png";
 import sponsorHoardings from "@/assets/sponsor-hoardings.png";
 import goalkeeper from "@/assets/goalkeeper.png";
+import goalkeeperSave from "@/assets/goalkeeper-save.png";
 import striker from "@/assets/striker.png";
 import ball from "@/assets/soccer-ball.png";
 
@@ -72,6 +73,7 @@ const Penalties = () => {
   const [shake, setShake] = useState(false);
   const [floatPrize, setFloatPrize] = useState<number | null>(null);
   const [muted, setMuted] = useState(true);
+  const [keeperSaved, setKeeperSaved] = useState(false);
 
   const goalAreaRef = useRef<HTMLDivElement>(null);
 
@@ -128,6 +130,7 @@ const Penalties = () => {
 
       // dispara movimento da bola e pulo do goleiro juntos
       setKeeperSide(finalSide);
+      setKeeperSaved(!isGoal);
       setBallPos(finalPos);
 
       // 700ms depois: resultado
@@ -159,6 +162,7 @@ const Penalties = () => {
             setAim(null);
             setBallPos({ x: 50, y: 88 });
             setKeeperSide("center");
+            setKeeperSaved(false);
             setPhase("aiming");
           }
         }, 1600);
@@ -175,6 +179,7 @@ const Penalties = () => {
     setAim(null);
     setBallPos({ x: 50, y: 88 });
     setKeeperSide("center");
+    setKeeperSaved(false);
     setFlash(null);
     setFloatPrize(null);
     setPhase("aiming");
