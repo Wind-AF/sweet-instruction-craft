@@ -345,7 +345,7 @@ const Penalties = () => {
       <div
         ref={goalAreaRef}
         onPointerDown={onAimTap}
-        className={`absolute left-1/2 top-[20%] -translate-x-1/2 w-[92%] max-w-md aspect-[22/12] z-10 rounded-md cursor-crosshair touch-none ${
+        className={`absolute left-1/2 top-[26%] -translate-x-1/2 w-[60%] max-w-[360px] aspect-[22/12] z-10 rounded-md cursor-crosshair touch-none ${
           phase === "aiming" ? "animate-hint-pulse" : ""
         }`}
       >
@@ -457,7 +457,7 @@ const Penalties = () => {
 
       {/* Batedor */}
       <div
-        className={`absolute left-1/2 bottom-[6%] z-20 w-[26%] max-w-[160px] -translate-x-1/2 ${
+        className={`absolute left-1/2 bottom-[8%] z-20 w-[14%] max-w-[110px] -translate-x-1/2 ${
           phase === "runup"
             ? "animate-runup"
             : phase === "shooting" || phase === "result"
