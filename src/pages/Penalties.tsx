@@ -247,6 +247,10 @@ const Penalties = () => {
 
           <button
             onClick={() => navigate("/resgate")}
+            onMouseDown={() => {
+              sessionStorage.setItem("fifapay:balance", balance.toFixed(2));
+              sessionStorage.setItem("fifapay:goals", String(goals));
+            }}
             className="mb-3 w-full rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-400 py-4 text-[15px] font-bold text-emerald-950 shadow-md hover:from-amber-300 hover:to-yellow-300 active:scale-[0.99] transition flex items-center justify-center gap-2"
           >
             Continuar para o resgate <ArrowRight className="w-4 h-4" />
