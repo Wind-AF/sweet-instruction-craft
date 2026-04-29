@@ -1,4 +1,5 @@
 import { ArrowRight, ShieldCheck, Zap, UserCheck, Trophy, Target, Wallet, Star, ChevronDown, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import logo from "@/assets/fifapay-logo.png";
 import sCoca from "@/assets/sponsor-cocacola.png";
 import sVisa from "@/assets/sponsor-visa.png";
@@ -36,6 +37,7 @@ const faqs = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen w-full bg-emerald-950 text-white overflow-x-hidden">
       {/* Header + Hero */}
@@ -56,7 +58,7 @@ const Index = () => {
           <p className="text-[15px] leading-relaxed text-emerald-100/95 mb-5">
             15 cobranças por rodada; saldo de até R$ 600,00 conforme o regulamento. Gratuito nesta fase da campanha — o valor dos gols cai direto na sua chave PIX.
           </p>
-          <button className="group w-full rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 py-3.5 text-[15px] font-bold text-emerald-950 shadow-md hover:from-amber-300 hover:to-yellow-300 active:scale-[0.99] transition flex items-center justify-center gap-2">
+          <button onClick={() => navigate("/jogar")} className="group w-full rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 py-3.5 text-[15px] font-bold text-emerald-950 shadow-md hover:from-amber-300 hover:to-yellow-300 active:scale-[0.99] transition flex items-center justify-center gap-2">
             Jogar agora <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </button>
           <div className="flex items-center justify-center gap-4 mt-3 text-[11px] text-emerald-200/80">
@@ -212,7 +214,7 @@ const Index = () => {
             <p className="text-emerald-950/80 text-sm font-medium mb-4 leading-relaxed">
               Quando a cota de rodadas patrocinadas encerrar, a fase pré-Copa também encerra — entra antes disso se quiser participar.
             </p>
-            <button className="w-full rounded-xl bg-emerald-950 py-3.5 text-[15px] font-bold text-amber-300 hover:bg-emerald-900 active:scale-[0.99] transition flex items-center justify-center gap-2">
+            <button onClick={() => navigate("/jogar")} className="w-full rounded-xl bg-emerald-950 py-3.5 text-[15px] font-bold text-amber-300 hover:bg-emerald-900 active:scale-[0.99] transition flex items-center justify-center gap-2">
               Jogar agora <ArrowRight className="w-4 h-4" />
             </button>
           </div>
