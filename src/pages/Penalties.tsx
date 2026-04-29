@@ -377,12 +377,18 @@ const Penalties = () => {
             top: "60%",
             width: "28%",
             aspectRatio: "2 / 3",
-            transform: `translate(-50%, -50%) rotate(${KEEPER_POSE[keeperSide].rot}deg)`,
+            transform: `translate(-50%, -50%) rotate(${keeperSaved ? 0 : KEEPER_POSE[keeperSide].rot}deg)`,
             transition: "left 380ms cubic-bezier(.4,1.4,.6,1), transform 380ms ease-out",
             transformOrigin: "50% 80%",
           }}
         >
-          <img src={goalkeeper} alt="" aria-hidden="true" className="w-full h-full object-contain object-bottom select-none" draggable={false} />
+          <img
+            src={keeperSaved ? goalkeeperSave : goalkeeper}
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-contain object-bottom select-none transition-opacity duration-200"
+            draggable={false}
+          />
         </div>
 
         {/* Bola voando (apenas durante chute/resultado) */}
@@ -415,37 +421,6 @@ const Penalties = () => {
               flash === "goal" ? "animate-goal-flash" : "animate-miss-flash"
             }`}
           />
-        )}
-
-        {/* Banner de resultado */}
-        {phase === "result" && (
-          <div className="absolute left-1/2 -translate-x-1/2 -bottom-[120%] z-50 flex justify-center pointer-events-none w-[78%] max-w-[280px]">
-            <div className="w-full rounded-xl overflow-hidden shadow-2xl border border-white/10 bg-[#0b1f3a] text-center">
-              <div className="px-4 pt-3 pb-2 border-b border-white/10">
-                <p className="text-[10px] font-bold tracking-[0.18em] text-white/80 uppercase">
-                  Copa do Mundo FIFA
-                </p>
-                <p
-                  className={`font-display text-4xl font-extrabold leading-none mt-1.5 ${
-                    flash === "goal" ? "text-white" : "text-red-400"
-                  }`}
-                  style={{ letterSpacing: "0.02em" }}
-                >
-                  {flash === "goal" ? "GOOOL!" : "DEFENDEU!"}
-                </p>
-              </div>
-              <div className="px-4 py-3">
-                <p className="text-[9px] font-bold tracking-[0.18em] text-white/70 uppercase mb-1">
-                  {flash === "goal" ? "Prêmio na carteira" : "Sem prêmio"}
-                </p>
-                <p className="font-display text-2xl font-extrabold tabular-nums text-yellow-400">
-                  {flash === "goal" && floatPrize !== null
-                    ? `R$ ${floatPrize.toFixed(2).replace(".", ",")}`
-                    : "R$ 0,00"}
-                </p>
-              </div>
-            </div>
-          </div>
         )}
 
         {/* Valor flutuante */}
