@@ -277,21 +277,21 @@ const Penalties = () => {
         }}
       />
 
-      {/* Torcida */}
+      {/* Torcida (mais ao fundo, menor e atrás de tudo) */}
       <img
         src={crowd}
         alt=""
         aria-hidden="true"
-        className="absolute inset-x-0 top-[8%] h-[22%] w-full object-cover object-center opacity-90 z-[1]"
+        className="absolute inset-x-0 top-[6%] h-[16%] w-full object-cover object-center opacity-80 z-[1]"
         draggable={false}
       />
 
-      {/* Placas dos patrocinadores */}
+      {/* Placas dos patrocinadores (atrás do gol, no nível do campo) */}
       <img
         src={sponsorHoardings}
         alt=""
         aria-hidden="true"
-        className="absolute inset-x-0 top-[27%] h-[5%] w-full object-cover object-center z-[2]"
+        className="absolute inset-x-0 top-[22%] h-[6%] w-full object-cover object-center z-[2]"
         draggable={false}
       />
 
@@ -300,7 +300,7 @@ const Penalties = () => {
         src={grass}
         alt=""
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 top-[32%] w-full h-[68%] object-cover object-bottom z-[2]"
+        className="absolute inset-x-0 bottom-0 top-[28%] w-full h-[72%] object-cover object-bottom z-[3]"
         draggable={false}
       />
 
