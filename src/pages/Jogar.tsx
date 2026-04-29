@@ -10,8 +10,8 @@ const Jogar = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
-    // Próxima etapa do fluxo virá depois
     sessionStorage.setItem("fifapay:player", name.trim());
+    navigate("/penaltis");
   };
 
   return (
