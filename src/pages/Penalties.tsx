@@ -436,7 +436,7 @@ const Penalties = () => {
 
       {/* Batedor */}
       <div
-        className={`absolute bottom-0 left-0 z-20 pointer-events-none ${
+        className={`absolute bottom-0 left-1/2 z-20 pointer-events-none ${
           phase === "runup"
             ? "animate-runup"
             : phase === "shooting" || phase === "result"
@@ -444,9 +444,10 @@ const Penalties = () => {
               : ""
         }`}
         style={{
-          width: "62%",
+          width: "55%",
+          maxWidth: "320px",
           height: "55%",
-          transform: "translateX(-6%)",
+          transform: "translateX(-50%)",
           transformOrigin: "50% 90%",
         }}
       >
@@ -456,14 +457,106 @@ const Penalties = () => {
       {/* Bola em descanso ao lado do batedor (antes do chute) */}
       {(phase === "aiming" || phase === "runup") && (
         <div
-          className="absolute z-30 w-10 h-10 pointer-events-none"
+          className="absolute z-30 w-10 h-10 pointer-events-none -translate-x-1/2"
           style={{
-            left: "calc(50% - 14px)",
-            bottom: "12%",
+            left: "58%",
+            bottom: "10%",
           }}
         >
           <img src={ball} alt="" aria-hidden="true" className="w-full h-full object-contain drop-shadow-md select-none" draggable={false} />
         </div>
+      )}
+
+      {/* Pop-up de resultado (GOOOL / DEFENDEU) */}
+      {phase === "result" && flash && (
+        <>
+          {/* Overlay escurecido */}
+          <div className="absolute inset-0 z-[60] bg-black/40 pointer-events-none" />
+
+          {/* Confetes (apenas no gol) */}
+          {flash === "goal" && (
+            <div className="absolute inset-0 z-[65] overflow-hidden pointer-events-none">
+              {Array.from({ length: 40 }).map((_, i) => {
+                const colors = ["#facc15", "#22c55e", "#3b82f6", "#ef4444", "#f97316", "#ec4899"];
+                const left = Math.random() * 100;
+                const tx = (Math.random() * 80 - 40) + "px";
+                const delay = Math.random() * 0.4;
+                const duration = 1.4 + Math.random() * 0.8;
+                const size = 6 + Math.random() * 6;
+                const color = colors[i % colors.length];
+                return (
+                  <span
+                    key={i}
+                    className="absolute top-0 animate-confetti rounded-sm"
+                    style={{
+                      left: `${left}%`,
+                      width: `${size}px`,
+                      height: `${size * 1.6}px`,
+                      background: color,
+                      ['--tx' as never]: tx,
+                      animationDelay: `${delay}s`,
+                      animationDuration: `${duration}s`,
+                    }}
+                  />
+                );
+              })}
+            </div>
+          )}
+
+          {/* Card central */}
+          <div
+            className="absolute left-1/2 top-1/2 z-[70] w-[80%] max-w-[320px] animate-popup-in pointer-events-none"
+            style={{ transform: "translate(-50%, -50%)" }}
+          >
+            {flash === "goal" ? (
+              <div className="rounded-2xl overflow-hidden shadow-2xl border-2 border-yellow-300 bg-gradient-to-br from-emerald-700 to-emerald-900 text-center">
+                <div className="px-5 pt-5 pb-3">
+                  <p className="text-[10px] font-bold tracking-[0.2em] text-yellow-200/90 uppercase mb-1">
+                    Que golaço!
+                  </p>
+                  <p
+                    className="font-display text-5xl font-extrabold leading-none text-yellow-300 drop-shadow-lg"
+                    style={{ letterSpacing: "0.04em", textShadow: "0 4px 16px rgba(0,0,0,0.5)" }}
+                  >
+                    GOOOL!
+                  </p>
+                </div>
+                <div className="px-5 py-4 bg-black/30">
+                  <p className="text-[10px] font-bold tracking-[0.18em] text-white/80 uppercase mb-1">
+                    Prêmio na carteira
+                  </p>
+                  <p className="font-display text-3xl font-extrabold tabular-nums text-yellow-300">
+                    {floatPrize !== null
+                      ? `+ R$ ${floatPrize.toFixed(2).replace(".", ",")}`
+                      : "R$ 0,00"}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-2xl overflow-hidden shadow-2xl border-2 border-red-400/70 bg-gradient-to-br from-slate-800 to-slate-900 text-center">
+                <div className="px-5 pt-5 pb-3">
+                  <p className="text-[10px] font-bold tracking-[0.2em] text-red-300/90 uppercase mb-1">
+                    Que defesa!
+                  </p>
+                  <p
+                    className="font-display text-5xl font-extrabold leading-none text-red-400"
+                    style={{ letterSpacing: "0.04em", textShadow: "0 4px 16px rgba(0,0,0,0.5)" }}
+                  >
+                    DEFENDEU!
+                  </p>
+                </div>
+                <div className="px-5 py-4 bg-black/30">
+                  <p className="text-[10px] font-bold tracking-[0.18em] text-white/70 uppercase mb-1">
+                    Sem prêmio nesta cobrança
+                  </p>
+                  <p className="font-display text-2xl font-extrabold tabular-nums text-white/60">
+                    R$ 0,00
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
       )}
 
       {/* Instrução */}
