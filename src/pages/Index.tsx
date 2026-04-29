@@ -79,7 +79,7 @@ const Index = () => {
                 key={i}
                 src={s.src}
                 alt={s.alt}
-                className="h-8 w-auto object-contain shrink-0 opacity-80 hover:opacity-100 transition-opacity select-none brightness-0 invert"
+                className="h-9 w-auto object-contain shrink-0 opacity-95 hover:opacity-100 transition-opacity select-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
                 draggable={false}
               />
             ))}
