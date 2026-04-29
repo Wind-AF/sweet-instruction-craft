@@ -345,7 +345,7 @@ const Penalties = () => {
       <div
         ref={goalAreaRef}
         onPointerDown={onAimTap}
-        className={`absolute left-1/2 top-[26%] -translate-x-1/2 w-[60%] max-w-[360px] aspect-[22/12] z-10 rounded-md cursor-crosshair touch-none ${
+        className={`absolute left-1/2 top-[96px] -translate-x-1/2 w-[92%] max-w-md aspect-[22/12] z-10 rounded-md cursor-crosshair touch-none ${
           phase === "aiming" ? "animate-hint-pulse" : ""
         }`}
       >
@@ -369,31 +369,30 @@ const Penalties = () => {
           className="absolute z-20"
           style={{
             left: `${KEEPER_POSE[keeperSide].x}%`,
-            bottom: "8%",
-            width: "22%",
-            transform: `translateX(-50%) rotate(${KEEPER_POSE[keeperSide].rot}deg)`,
+            top: "60%",
+            width: "28%",
+            aspectRatio: "2 / 3",
+            transform: `translate(-50%, -50%) rotate(${KEEPER_POSE[keeperSide].rot}deg)`,
             transition: "left 380ms cubic-bezier(.4,1.4,.6,1), transform 380ms ease-out",
             transformOrigin: "50% 80%",
           }}
         >
-          <img src={goalkeeper} alt="" aria-hidden="true" className="w-full h-auto select-none" draggable={false} />
+          <img src={goalkeeper} alt="" aria-hidden="true" className="w-full h-full object-contain object-bottom select-none" draggable={false} />
         </div>
 
         {/* Bola voando */}
         <div
-          className="absolute z-30"
+          className="absolute z-30 w-8 h-8 -translate-x-1/2 -translate-y-1/2"
           style={{
             left: `${ballPos.x}%`,
             top: `${ballPos.y}%`,
-            width: "10%",
-            transform: "translate(-50%, -50%)",
             transition:
               phase === "shooting" || phase === "result"
-                ? "left 700ms cubic-bezier(.2,.6,.4,1), top 700ms cubic-bezier(.2,.6,.4,1), width 700ms ease-out"
+                ? "left 700ms cubic-bezier(.2,.6,.4,1), top 700ms cubic-bezier(.2,.6,.4,1)"
                 : "none",
           }}
         >
-          <img src={ball} alt="" aria-hidden="true" className="w-full h-auto select-none" draggable={false} />
+          <img src={ball} alt="" aria-hidden="true" className="w-full h-full object-contain select-none" draggable={false} />
         </div>
 
         {/* Marcador da mira */}
@@ -457,16 +456,21 @@ const Penalties = () => {
 
       {/* Batedor */}
       <div
-        className={`absolute left-1/2 bottom-[8%] z-20 w-[14%] max-w-[110px] -translate-x-1/2 ${
+        className={`absolute bottom-0 left-0 z-20 pointer-events-none ${
           phase === "runup"
             ? "animate-runup"
             : phase === "shooting" || phase === "result"
               ? "animate-kick-leg"
               : ""
         }`}
-        style={{ transformOrigin: "50% 90%" }}
+        style={{
+          width: "62%",
+          height: "55%",
+          transform: "translateX(-6%)",
+          transformOrigin: "50% 90%",
+        }}
       >
-        <img src={striker} alt="" aria-hidden="true" className="w-full h-auto select-none" draggable={false} />
+        <img src={striker} alt="" aria-hidden="true" className="w-full h-full object-contain object-bottom select-none" draggable={false} />
       </div>
 
       {/* Instrução */}
