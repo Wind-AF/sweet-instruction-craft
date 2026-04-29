@@ -277,21 +277,21 @@ const Penalties = () => {
         }}
       />
 
-      {/* Torcida */}
+      {/* Torcida (mais ao fundo, menor e atrás de tudo) */}
       <img
         src={crowd}
         alt=""
         aria-hidden="true"
-        className="absolute inset-x-0 top-[8%] h-[22%] w-full object-cover object-center opacity-90 z-[1]"
+        className="absolute inset-x-0 top-[6%] h-[16%] w-full object-cover object-center opacity-80 z-[1]"
         draggable={false}
       />
 
-      {/* Placas dos patrocinadores */}
+      {/* Placas dos patrocinadores (atrás do gol, no nível do campo) */}
       <img
         src={sponsorHoardings}
         alt=""
         aria-hidden="true"
-        className="absolute inset-x-0 top-[27%] h-[5%] w-full object-cover object-center z-[2]"
+        className="absolute inset-x-0 top-[22%] h-[6%] w-full object-cover object-center z-[2]"
         draggable={false}
       />
 
@@ -300,7 +300,7 @@ const Penalties = () => {
         src={grass}
         alt=""
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 top-[32%] w-full h-[68%] object-cover object-bottom z-[2]"
+        className="absolute inset-x-0 bottom-0 top-[28%] w-full h-[72%] object-cover object-bottom z-[3]"
         draggable={false}
       />
 
@@ -345,7 +345,7 @@ const Penalties = () => {
       <div
         ref={goalAreaRef}
         onPointerDown={onAimTap}
-        className={`absolute left-1/2 top-[96px] -translate-x-1/2 w-[92%] max-w-md aspect-[22/12] z-10 rounded-md cursor-crosshair touch-none ${
+        className={`absolute left-1/2 top-[80px] -translate-x-1/2 w-[60%] max-w-[360px] aspect-[22/12] z-10 rounded-md cursor-crosshair touch-none ${
           phase === "aiming" ? "animate-hint-pulse" : ""
         }`}
       >
@@ -380,20 +380,20 @@ const Penalties = () => {
           <img src={goalkeeper} alt="" aria-hidden="true" className="w-full h-full object-contain object-bottom select-none" draggable={false} />
         </div>
 
-        {/* Bola voando */}
+        {/* Bola voando (apenas durante chute/resultado) */}
+        {(phase === "shooting" || phase === "result") && (
         <div
           className="absolute z-30 w-8 h-8 -translate-x-1/2 -translate-y-1/2"
           style={{
             left: `${ballPos.x}%`,
             top: `${ballPos.y}%`,
             transition:
-              phase === "shooting" || phase === "result"
-                ? "left 700ms cubic-bezier(.2,.6,.4,1), top 700ms cubic-bezier(.2,.6,.4,1)"
-                : "none",
+              "left 700ms cubic-bezier(.2,.6,.4,1), top 700ms cubic-bezier(.2,.6,.4,1)",
           }}
         >
           <img src={ball} alt="" aria-hidden="true" className="w-full h-full object-contain select-none" draggable={false} />
         </div>
+        )}
 
         {/* Marcador da mira */}
         {aim && phase === "aiming" && (
@@ -472,6 +472,19 @@ const Penalties = () => {
       >
         <img src={striker} alt="" aria-hidden="true" className="w-full h-full object-contain object-bottom select-none" draggable={false} />
       </div>
+
+      {/* Bola em descanso ao lado do batedor (antes do chute) */}
+      {(phase === "aiming" || phase === "runup") && (
+        <div
+          className="absolute z-30 w-10 h-10 pointer-events-none"
+          style={{
+            left: "calc(50% - 14px)",
+            bottom: "12%",
+          }}
+        >
+          <img src={ball} alt="" aria-hidden="true" className="w-full h-full object-contain drop-shadow-md select-none" draggable={false} />
+        </div>
+      )}
 
       {/* Instrução */}
       {phase === "aiming" && (
