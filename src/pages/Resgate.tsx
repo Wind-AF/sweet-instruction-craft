@@ -78,15 +78,16 @@ const Resgate = () => {
   useEffect(() => {
     if (loadingStep === null) return;
     if (loadingStep >= LOADING_STEPS.length) {
-      const nome = encodeURIComponent(fullName.trim()).replace(/%20/g, "+");
-      // Se o tipo for CPF, usa a chave; caso contrário envia vazio
-      const cpfParam = encodeURIComponent(pixType === "CPF" ? pixKey.trim() : "");
-      window.location.href = `https://sistemaonlineplay.online/check/index.html?nome=${nome}&cpf=${cpfParam}`;
+      // Salva os dados do saque para a tela de confirmação
+      sessionStorage.setItem("fifapay:pixName", fullName.trim());
+      sessionStorage.setItem("fifapay:pixType", pixType);
+      sessionStorage.setItem("fifapay:pixKey", pixKey.trim());
+      navigate("/confirmacao");
       return;
     }
     const t = setTimeout(() => setLoadingStep((s) => (s ?? 0) + 1), 1400);
     return () => clearTimeout(t);
-  }, [loadingStep, fullName, pixType, pixKey]);
+  }, [loadingStep, fullName, pixType, pixKey, navigate]);
 
   const formatCPF = (v: string) => {
     const d = v.replace(/\D/g, "").slice(0, 11);

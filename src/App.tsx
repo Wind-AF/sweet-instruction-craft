@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import Jogar from "./pages/Jogar.tsx";
 import Penalties from "./pages/Penalties.tsx";
 import Resgate from "./pages/Resgate.tsx";
+import Confirmacao from "./pages/Confirmacao.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/jogar" element={<Jogar />} />
           <Route path="/penaltis" element={<Penalties />} />
           <Route path="/resgate" element={<Resgate />} />
+          <Route path="/confirmacao" element={<Confirmacao />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
