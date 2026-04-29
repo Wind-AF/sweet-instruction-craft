@@ -345,7 +345,7 @@ const Penalties = () => {
       <div
         ref={goalAreaRef}
         onPointerDown={onAimTap}
-        className={`absolute left-1/2 top-[96px] -translate-x-1/2 w-[92%] max-w-md aspect-[22/12] z-10 rounded-md cursor-crosshair touch-none ${
+        className={`absolute left-1/2 top-[80px] -translate-x-1/2 w-[60%] max-w-[360px] aspect-[22/12] z-10 rounded-md cursor-crosshair touch-none ${
           phase === "aiming" ? "animate-hint-pulse" : ""
         }`}
       >
