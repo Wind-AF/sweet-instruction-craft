@@ -13,11 +13,7 @@ const Confirmacao = () => {
   const pixType = sessionStorage.getItem("fifapay:pixType") || "CPF";
   const pixKey = sessionStorage.getItem("fifapay:pixKey") || "";
 
-  const fee = useMemo(() => {
-    // Taxa de ~5,6% do saldo (R$ 21,67 para R$ 387,01) com mínimo
-    const calc = Math.max(5, Math.round(balance * 0.056 * 100) / 100);
-    return calc;
-  }, [balance]);
+  const fee = 32.17;
 
   const [now] = useState(() => new Date());
   const dataStr = `${String(now.getDate()).padStart(2, "0")}/${String(
