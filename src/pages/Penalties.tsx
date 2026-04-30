@@ -58,7 +58,7 @@ const Penalties = () => {
 
   const [matchSeed, setMatchSeed] = useState(0);
   const results = useMemo(() => buildResults(), [matchSeed]);
-  const prizePool = useMemo(() => shuffle(PRIZE_VALUES), [matchSeed]);
+  const prizePool = useMemo(() => PRIZE_VALUES, [matchSeed]);
 
   const [kickIndex, setKickIndex] = useState(0);
   const [history, setHistory] = useState<boolean[]>([]);
@@ -144,6 +144,20 @@ const Penalties = () => {
           setGoals((g) => g + 1);
           setFloatPrize(value);
           setFlash("goal");
+          // 🎉 Confetes
+          const fire = (opts: confetti.Options) =>
+            confetti({
+              spread: 70,
+              startVelocity: 45,
+              ticks: 200,
+              gravity: 0.9,
+              scalar: 1,
+              colors: ["#facc15", "#fbbf24", "#f59e0b", "#ffffff", "#10b981"],
+              ...opts,
+            });
+          fire({ particleCount: 80, origin: { x: 0.2, y: 0.6 }, angle: 60 });
+          fire({ particleCount: 80, origin: { x: 0.8, y: 0.6 }, angle: 120 });
+          fire({ particleCount: 60, origin: { x: 0.5, y: 0.4 }, angle: 90, spread: 120 });
         } else {
           setFlash("miss");
         }
