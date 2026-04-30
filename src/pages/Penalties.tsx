@@ -302,13 +302,14 @@ const Penalties = () => {
   /* ---------- Tela do jogo ---------- */
   return (
     <div
-      className={`fixed inset-0 overflow-hidden select-none bg-[#143d26] ${
+      className={`fixed inset-0 overflow-hidden select-none bg-[#143d26] flex flex-col ${
         shake ? "animate-camera-shake" : ""
       }`}
+      style={{ height: "100dvh" }}
     >
       {/* Céu */}
       <div
-        className="absolute inset-x-0 top-0 h-[28%] z-0"
+        className="absolute inset-x-0 top-0 h-[26%] z-0"
         style={{
           background:
             "linear-gradient(180deg, #020617 0%, #0f172a 28%, #1a3350 62%, rgba(22,58,38,0.88) 100%)",
@@ -320,7 +321,7 @@ const Penalties = () => {
         src={crowd}
         alt=""
         aria-hidden="true"
-        className="absolute inset-x-0 top-[6%] h-[16%] w-full object-cover object-center opacity-80 z-[1]"
+        className="absolute inset-x-0 top-[5%] h-[14%] w-full object-cover object-center opacity-80 z-[1]"
         draggable={false}
       />
 
@@ -329,7 +330,7 @@ const Penalties = () => {
         src={sponsorHoardings}
         alt=""
         aria-hidden="true"
-        className="absolute inset-x-0 top-[22%] h-[6%] w-full object-cover object-center z-[2]"
+        className="absolute inset-x-0 top-[19%] h-[5%] w-full object-cover object-center z-[2]"
         draggable={false}
       />
 
@@ -338,7 +339,7 @@ const Penalties = () => {
         src={grass}
         alt=""
         aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 top-[28%] w-full h-[72%] object-cover object-bottom z-[3]"
+        className="absolute inset-x-0 bottom-0 top-[24%] w-full h-[76%] object-cover object-bottom z-[3]"
         draggable={false}
       />
 
@@ -383,9 +384,10 @@ const Penalties = () => {
       <div
         ref={goalAreaRef}
         onPointerDown={onAimTap}
-        className={`absolute left-1/2 top-[70px] -translate-x-1/2 w-[92%] max-w-[460px] aspect-[22/11] z-30 rounded-md cursor-crosshair touch-none ${
+        className={`absolute left-1/2 -translate-x-1/2 w-[88%] max-w-[420px] aspect-[22/11] z-30 rounded-md cursor-crosshair touch-none ${
           phase === "aiming" ? "animate-hint-pulse" : ""
         }`}
+        style={{ top: "12dvh" }}
       >
         {/* Trave (SVG) */}
         <svg viewBox="0 0 220 120" className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
@@ -404,15 +406,20 @@ const Penalties = () => {
 
         {/* Goleiro */}
         <div
-          className="absolute z-20"
+          className={`absolute z-20 ${keeperDiving ? "animate-keeper-dive" : ""}`}
           style={{
             left: `${KEEPER_POSE[keeperSide].x}%`,
-            top: "55%",
-            width: "22%",
+            top: `${KEEPER_POSE[keeperSide].y}%`,
+            width: "26%",
             aspectRatio: "2 / 3",
             transform: `translate(-50%, -50%) rotate(${KEEPER_POSE[keeperSide].rot}deg)`,
-            transition: "left 380ms cubic-bezier(.4,1.4,.6,1), transform 380ms ease-out",
+            transition: keeperDiving
+              ? "none"
+              : "left 380ms cubic-bezier(.4,1.4,.6,1), top 380ms cubic-bezier(.4,1.4,.6,1), transform 380ms ease-out",
             transformOrigin: "50% 80%",
+            ["--keeper-tx" as any]: "-50%",
+            ["--keeper-ty" as any]: "-50%",
+            ["--keeper-rot" as any]: `${KEEPER_POSE[keeperSide].rot}deg`,
           }}
         >
           <img src={goalkeeper} alt="" aria-hidden="true" className="w-full h-full object-contain object-bottom select-none" draggable={false} />
@@ -502,8 +509,9 @@ const Penalties = () => {
               : ""
         }`}
         style={{
-          width: "62%",
-          height: "55%",
+          width: "44%",
+          maxWidth: "260px",
+          height: "42dvh",
           transform: "translateX(-6%)",
           transformOrigin: "50% 90%",
         }}
@@ -514,10 +522,10 @@ const Penalties = () => {
       {/* Bola em descanso ao lado do batedor (antes do chute) */}
       {(phase === "aiming" || phase === "runup") && (
         <div
-          className="absolute z-30 w-10 h-10 pointer-events-none"
+          className="absolute z-30 w-9 h-9 pointer-events-none"
           style={{
             left: "calc(50% - 14px)",
-            bottom: "12%",
+            bottom: "10dvh",
           }}
         >
           <img src={ball} alt="" aria-hidden="true" className="w-full h-full object-contain drop-shadow-md select-none" draggable={false} />
@@ -526,7 +534,7 @@ const Penalties = () => {
 
       {/* Instrução */}
       {phase === "aiming" && (
-        <div className="absolute bottom-2 inset-x-0 z-30 flex justify-center pointer-events-none">
+        <div className="absolute bottom-3 inset-x-0 z-30 flex justify-center pointer-events-none">
           <div className="bg-emerald-950/85 border border-emerald-400/30 rounded-full px-4 py-1.5 backdrop-blur">
             <p className="text-yellow-300 text-[11px] font-bold uppercase tracking-wider">
               Toque no gol para chutar
