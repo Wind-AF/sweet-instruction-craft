@@ -39,7 +39,7 @@ const faqs = [
 const Index = () => {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen w-full bg-emerald-950 text-white overflow-x-hidden">
+    <div className="min-h-dvh w-full bg-emerald-950 text-white overflow-x-hidden safe-x">
       {/* Header + Hero */}
       <div className="max-w-md mx-auto px-5 pt-5">
         <div className="flex items-center justify-between mb-4">

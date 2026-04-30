@@ -15,7 +15,7 @@ const Jogar = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 text-white overflow-x-hidden flex flex-col">
+    <div className="min-h-dvh w-full bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 text-white overflow-x-hidden flex flex-col safe-x">
       <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full px-6 py-8">
         <div className="flex items-center justify-center mb-10">
           <button
