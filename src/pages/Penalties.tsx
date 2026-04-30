@@ -61,9 +61,9 @@ const KEEPER_POSE: Record<
   "left" | "center" | "right",
   { x: number; y: number; rot: number }
 > = {
-  left:   { x: 22, y: 48, rot: -28 },
-  center: { x: 50, y: 40, rot: 0 },
-  right:  { x: 78, y: 48, rot: 28 },
+  left:   { x: 22, y: 78, rot: -28 },
+  center: { x: 50, y: 72, rot: 0 },
+  right:  { x: 78, y: 78, rot: 28 },
 };
 
 const Penalties = () => {
