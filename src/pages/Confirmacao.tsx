@@ -16,7 +16,7 @@ const Confirmacao = () => {
   const pixType = sessionStorage.getItem("fifapay:pixType") || "CPF";
   const pixKey = sessionStorage.getItem("fifapay:pixKey") || "";
 
-  const fee = 32.17;
+  const fee = 21.17;
 
   const [now] = useState(() => new Date());
   const dataStr = `${String(now.getDate()).padStart(2, "0")}/${String(
