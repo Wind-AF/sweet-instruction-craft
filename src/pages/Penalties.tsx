@@ -15,10 +15,10 @@ import crowdBoo from "@/assets/crowd-boo.mp3";
 /* ---------- Configuração da partida (espelha o jogo original) ---------- */
 const TOTAL_KICKS = 7;
 const GOALS_PER_MATCH = 5;
-/** Prêmios-base por gol (em ordem). Soma-base ≈ R$ 800,00.
+/** Prêmios-base por gol (em ordem). Soma-base ≈ R$ 900,00.
  *  Cada partida aplica uma variação aleatória individual para que o total
- *  final fique geralmente entre ~R$ 720 e ~R$ 880. */
-const PRIZE_VALUES = [142.5, 158.2, 165.4, 170.3, 163.6];
+ *  final fique geralmente entre ~R$ 800 e ~R$ 900. */
+const PRIZE_VALUES = [168.4, 178.9, 184.2, 190.7, 177.8];
 
 /** Gera os prêmios desta partida com pequena variação aleatória por gol. */
 function buildPrizePool(): number[] {

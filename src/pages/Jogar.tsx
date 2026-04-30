@@ -67,7 +67,7 @@ const Jogar = () => {
                 <Trophy className="w-5 h-5 text-yellow-400" />
               </div>
               <div>
-                <p className="font-bold text-sm leading-tight">15 pênaltis, até 600 reais (R$ 600,00)</p>
+                <p className="font-bold text-sm leading-tight">7 pênaltis, até 900 reais (R$ 900,00)</p>
                 <p className="text-emerald-200/70 text-xs mt-0.5 leading-snug">
                   Ganhe entre R$ 34,08 e R$ 54,12 a cada gol (valores variam)
                 </p>

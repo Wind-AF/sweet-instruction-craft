@@ -19,21 +19,21 @@ const sponsors = [
 ];
 
 const steps = [
-  { icon: Target, title: "Bata 15 pênaltis", desc: "Arraste para mirar e chutar. Igual a Copa de verdade." },
-  { icon: Trophy, title: "Cada gol vira dinheiro", desc: "Entre R$ 34,08 e R$ 54,12 por gol, bancado pelos patrocinadores." },
+  { icon: Target, title: "Bata 7 pênaltis", desc: "Arraste para mirar e chutar. Igual a Copa de verdade." },
+  { icon: Trophy, title: "Cada gol vira dinheiro", desc: "Entre R$ 148,00 e R$ 213,00 por gol, bancado pelos patrocinadores." },
   { icon: Wallet, title: "Saque na hora via PIX", desc: "Informe sua chave ao final e receba o saldo em segundos." },
 ];
 
 const testimonials = [
   { initial: "C", name: "Carlos M.", city: "Recife, PE", value: "R$ 89,40", text: "“Testei num domingo à tarde. Três gols seguidos e o valor apareceu no extrato do banco no mesmo dia.”" },
   { initial: "J", name: "Juliana R.", city: "Belo Horizonte, MG", value: "R$ 102,18", text: "“Rápido demais — pensei que ia pedir cadastro e não pediu. Só o nome e a partida.”" },
-  { initial: "A", name: "Anderson P.", city: "Curitiba, PR", value: "R$ 600,00", text: "“Fui mal na primeira rodada, na segunda deu certo. O teto da rodada bateu com o que falavam no regulamento.”" },
+  { initial: "A", name: "Anderson P.", city: "Curitiba, PR", value: "R$ 900,00", text: "“Fui mal na primeira rodada, na segunda deu certo. O teto da rodada bateu com o que falavam no regulamento.”" },
 ];
 
 const faqs = [
   { q: "Preciso depositar ou pagar alguma coisa para jogar?", a: "Não. A ação é 100% bancada pelos patrocinadores oficiais da Copa. Você joga grátis e recebe o valor real dos gols direto no PIX." },
   { q: "Quanto tempo leva para o dinheiro cair na minha conta?", a: "O PIX é processado em menos de 60 segundos após a última cobrança. Basta informar sua chave PIX ao final da partida." },
-  { q: "Posso participar mais de uma vez?", a: "Cada pessoa tem direito a uma partida premiada por CPF durante a campanha pré Copa. Use sua chance com atenção e mire nas 15 cobranças." },
+  { q: "Posso participar mais de uma vez?", a: "Cada pessoa tem direito a uma partida premiada por CPF durante a campanha pré Copa. Use sua chance com atenção e mire nas 7 cobranças." },
 ];
 
 const Index = () => {
@@ -56,7 +56,7 @@ const Index = () => {
             Bata pênaltis e receba no PIX em poucos minutos.
           </h1>
           <p className="text-[15px] leading-relaxed text-emerald-100/95 mb-5">
-            15 cobranças por rodada; saldo de até R$ 600,00 conforme o regulamento. Gratuito nesta fase da campanha — o valor dos gols cai direto na sua chave PIX.
+            7 cobranças por rodada; saldo de até R$ 900,00 conforme o regulamento. Gratuito nesta fase da campanha — o valor dos gols cai direto na sua chave PIX.
           </p>
           <button onClick={() => navigate("/jogar")} className="group w-full rounded-xl bg-gradient-to-r from-amber-400 to-yellow-400 py-3.5 text-[15px] font-bold text-emerald-950 shadow-md hover:from-amber-300 hover:to-yellow-300 active:scale-[0.99] transition flex items-center justify-center gap-2">
             Jogar agora <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
