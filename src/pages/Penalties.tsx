@@ -13,8 +13,19 @@ import ball from "@/assets/soccer-ball.png";
 /* ---------- Configuração da partida (espelha o jogo original) ---------- */
 const TOTAL_KICKS = 7;
 const GOALS_PER_MATCH = 5;
-/** Prêmios por gol (em ordem). Soma = R$ 800,00 */
+/** Prêmios-base por gol (em ordem). Soma-base ≈ R$ 800,00.
+ *  Cada partida aplica uma variação aleatória individual para que o total
+ *  final fique geralmente entre ~R$ 720 e ~R$ 880. */
 const PRIZE_VALUES = [142.5, 158.2, 165.4, 170.3, 163.6];
+
+/** Gera os prêmios desta partida com pequena variação aleatória por gol. */
+function buildPrizePool(): number[] {
+  return PRIZE_VALUES.map((base) => {
+    // Variação de -12% a +12% por prêmio
+    const factor = 1 + (Math.random() * 0.24 - 0.12);
+    return Math.round(base * factor * 100) / 100;
+  });
+}
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -58,7 +69,7 @@ const Penalties = () => {
 
   const [matchSeed, setMatchSeed] = useState(0);
   const results = useMemo(() => buildResults(), [matchSeed]);
-  const prizePool = useMemo(() => PRIZE_VALUES, [matchSeed]);
+  const prizePool = useMemo(() => buildPrizePool(), [matchSeed]);
 
   const [kickIndex, setKickIndex] = useState(0);
   const [history, setHistory] = useState<boolean[]>([]);
