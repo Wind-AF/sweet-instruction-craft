@@ -389,8 +389,8 @@ const Penalties = () => {
           className="absolute z-20"
           style={{
             left: `${KEEPER_POSE[keeperSide].x}%`,
-            top: "60%",
-            width: "28%",
+            top: "72%",
+            width: "44%",
             aspectRatio: "2 / 3",
             transform: `translate(-50%, -50%) rotate(${KEEPER_POSE[keeperSide].rot}deg)`,
             transition: "left 380ms cubic-bezier(.4,1.4,.6,1), transform 380ms ease-out",
