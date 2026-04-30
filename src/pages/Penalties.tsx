@@ -9,6 +9,7 @@ import sponsorHoardings from "@/assets/sponsor-hoardings.png";
 import goalkeeper from "@/assets/goalkeeper.png";
 import striker from "@/assets/striker.png";
 import ball from "@/assets/soccer-ball.png";
+import goalCheer from "@/assets/goal-cheer.mp3";
 
 /* ---------- Configuração da partida (espelha o jogo original) ---------- */
 const TOTAL_KICKS = 7;
@@ -90,6 +91,18 @@ const Penalties = () => {
   const [muted, setMuted] = useState(true);
 
   const goalAreaRef = useRef<HTMLDivElement>(null);
+  const cheerAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const audio = new Audio(goalCheer);
+    audio.preload = "auto";
+    audio.volume = 0.85;
+    cheerAudioRef.current = audio;
+    return () => {
+      audio.pause();
+      cheerAudioRef.current = null;
+    };
+  }, []);
 
   /* Toque/clique na trave para mirar e chutar */
   const onAimTap = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -160,6 +173,14 @@ const Penalties = () => {
           setGoals((g) => g + 1);
           setFloatPrize(value);
           setFlash("goal");
+          // 🔊 Som da torcida
+          const a = cheerAudioRef.current;
+          if (a) {
+            try {
+              a.currentTime = 0;
+              void a.play().catch(() => {});
+            } catch {}
+          }
           // 🎉 Confetes
           const fire = (opts: confetti.Options) =>
             confetti({
