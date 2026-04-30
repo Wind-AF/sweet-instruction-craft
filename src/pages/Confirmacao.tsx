@@ -1,5 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Clock, Copy, Loader2, X } from "lucide-react";
+import {
+  Check,
+  CheckCircle2,
+  Clock,
+  Copy,
+  Loader2,
+  ShieldCheck,
+  X,
+} from "lucide-react";
 import QRCode from "qrcode";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -303,103 +311,182 @@ const Confirmacao = () => {
       </div>
 
       {pixOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 sm:items-center sm:p-4">
-          <div className="relative w-full max-w-md rounded-t-3xl bg-emerald-950 p-6 shadow-2xl ring-1 ring-emerald-700/40 sm:rounded-3xl">
-            <button
-              type="button"
-              onClick={closePix}
-              className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full bg-emerald-900/80 text-white hover:bg-emerald-800"
-              aria-label="Fechar"
-            >
-              <X className="h-4 w-4" />
-            </button>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950">
+          <div className="mx-auto max-w-md px-5 pb-10 pt-5">
+            {/* Header com logo e botão de fechar */}
+            <div className="mb-5 flex items-center justify-between">
+              <img
+                src={logo}
+                alt="FifaPay"
+                className="h-10 w-auto select-none object-contain drop-shadow-[0_6px_14px_rgba(250,204,21,0.25)]"
+                draggable={false}
+              />
+              <button
+                type="button"
+                onClick={closePix}
+                className="grid h-9 w-9 place-items-center rounded-full bg-emerald-900/80 text-white ring-1 ring-emerald-700/40 hover:bg-emerald-800"
+                aria-label="Fechar"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
 
-            <div className="mb-4 text-center">
-              <p className="text-xs font-bold uppercase tracking-wider text-yellow-400">
+            <div className="mb-5 h-px w-full bg-emerald-700/40" />
+
+            {/* Card de valor */}
+            <div className="mb-4 rounded-2xl border border-emerald-700/40 bg-emerald-950/70 p-5 shadow-inner">
+              <p className="text-xs font-bold uppercase tracking-wider text-yellow-400/95">
                 Pagamento PIX
               </p>
-              <p className="mt-2 text-3xl font-display font-bold text-white">
+              <p className="mt-3 text-4xl font-display font-bold tabular-nums text-white">
                 R$ {formatBRL(fee)}
               </p>
-              <p className="mt-1 text-xs text-emerald-200/75">
-                Para liberar R$ {formatBRL(balance)}
+              <p className="mt-3 text-sm text-emerald-200/75">
+                Para liberar{" "}
+                <span className="font-bold text-yellow-300">
+                  R$ {formatBRL(balance)}
+                </span>
               </p>
             </div>
 
-            {pixLoading && (
-              <div className="flex flex-col items-center justify-center py-10">
-                <Loader2 className="h-10 w-10 animate-spin text-yellow-400" />
-                <p className="mt-4 text-sm text-emerald-100/85">
-                  Gerando código PIX...
-                </p>
-              </div>
-            )}
+            {/* Card principal: QR + código */}
+            <div className="mb-4 rounded-2xl border border-emerald-700/40 bg-emerald-950/70 p-5">
+              <p className="mb-4 text-xs font-bold uppercase tracking-wider text-emerald-300/85">
+                Escaneie o QR-Code ou copie o código
+              </p>
 
-            {!pixLoading && pixError && (
-              <div className="rounded-xl border border-rose-500/40 bg-rose-950/40 p-4 text-center">
-                <p className="text-sm font-bold text-rose-300">
-                  Não foi possível gerar o PIX
-                </p>
-                <p className="mt-1 text-xs text-rose-200/80">{pixError}</p>
-                <button
-                  type="button"
-                  onClick={handlePay}
-                  className="mt-4 inline-flex h-10 items-center rounded-lg bg-yellow-400 px-4 text-sm font-bold text-emerald-950 hover:bg-yellow-300"
-                >
-                  Tentar novamente
-                </button>
-              </div>
-            )}
-
-            {!pixLoading && !pixError && pixQrDataUrl && (
-              <>
-                <div className="mx-auto flex w-fit items-center justify-center rounded-2xl bg-white p-3">
-                  <img
-                    src={pixQrDataUrl}
-                    alt="QR Code PIX"
-                    className="h-56 w-56"
-                  />
+              {pixLoading && (
+                <div className="flex flex-col items-center justify-center py-10">
+                  <Loader2 className="h-10 w-10 animate-spin text-yellow-400" />
+                  <p className="mt-4 text-sm text-emerald-100/85">
+                    Gerando código PIX...
+                  </p>
                 </div>
+              )}
 
-                <button
-                  type="button"
-                  onClick={copyPix}
-                  className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-400 text-sm font-display font-bold text-emerald-950 shadow-lg shadow-yellow-500/25 hover:from-yellow-300 hover:to-amber-300 active:scale-[0.99]"
-                >
-                  <Copy className="h-4 w-4" />
-                  Copiar código PIX
-                </button>
-
-                <div className="mt-3 max-h-20 overflow-auto break-all rounded-lg border border-emerald-800/60 bg-emerald-950/80 p-3 font-mono text-[11px] leading-relaxed text-emerald-100/85">
-                  {pixCode}
+              {!pixLoading && pixError && (
+                <div className="rounded-xl border border-rose-500/40 bg-rose-950/40 p-4 text-center">
+                  <p className="text-sm font-bold text-rose-300">
+                    Não foi possível gerar o PIX
+                  </p>
+                  <p className="mt-1 text-xs text-rose-200/80">{pixError}</p>
+                  <button
+                    type="button"
+                    onClick={handlePay}
+                    className="mt-4 inline-flex h-10 items-center rounded-lg bg-yellow-400 px-4 text-sm font-bold text-emerald-950 hover:bg-yellow-300"
+                  >
+                    Tentar novamente
+                  </button>
                 </div>
+              )}
 
-                <div className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-emerald-900/60 px-3 py-2 text-xs text-emerald-100/85">
-                  {pixStatus === "pending" && (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin text-yellow-400" />
-                      Aguardando pagamento...
-                    </>
-                  )}
-                  {pixStatus === "approved" && (
-                    <>
-                      <Check className="h-3.5 w-3.5 text-emerald-300" />
-                      Pagamento confirmado!
-                    </>
-                  )}
-                  {(pixStatus === "failed" || pixStatus === "refunded") && (
-                    <span className="text-rose-300">
-                      Pagamento não concluído.
+              {!pixLoading && !pixError && pixQrDataUrl && (
+                <>
+                  <div className="mx-auto flex w-fit items-center justify-center rounded-2xl bg-white p-3 shadow-lg shadow-yellow-500/10 ring-2 ring-yellow-400/30">
+                    <img
+                      src={pixQrDataUrl}
+                      alt="QR Code PIX"
+                      className="h-56 w-56"
+                    />
+                  </div>
+
+                  <div className="mt-5 flex items-center justify-between border-y border-emerald-800/60 py-3">
+                    <span className="text-sm font-medium text-emerald-300/85">
+                      Valor PIX:
                     </span>
-                  )}
-                </div>
+                    <span className="text-lg font-display font-bold text-white">
+                      R$ {formatBRL(fee)}
+                    </span>
+                  </div>
 
-                <p className="mt-3 text-center text-[11px] text-emerald-300/70">
-                  Abra o app do seu banco, escolha PIX → Pix Copia e Cola e cole
-                  o código.
+                  <div className="mt-3 max-h-20 overflow-auto break-all rounded-lg border border-emerald-800/60 bg-emerald-950/80 p-3 font-mono text-[11px] leading-relaxed text-emerald-100/85">
+                    {pixCode}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={copyPix}
+                    className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-400 text-sm font-display font-bold text-emerald-950 shadow-lg shadow-yellow-500/25 hover:from-yellow-300 hover:to-amber-300 active:scale-[0.99]"
+                  >
+                    <Copy className="h-4 w-4" />
+                    Copiar código PIX
+                  </button>
+
+                  <div className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-emerald-900/60 px-3 py-2 text-xs text-emerald-100/85">
+                    {pixStatus === "pending" && (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin text-yellow-400" />
+                        Aguardando pagamento...
+                      </>
+                    )}
+                    {pixStatus === "approved" && (
+                      <>
+                        <Check className="h-3.5 w-3.5 text-emerald-300" />
+                        Pagamento confirmado!
+                      </>
+                    )}
+                    {(pixStatus === "failed" || pixStatus === "refunded") && (
+                      <span className="text-rose-300">
+                        Pagamento não concluído.
+                      </span>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Como pagar */}
+            {!pixLoading && !pixError && pixQrDataUrl && (
+              <div className="mb-4 rounded-2xl border border-emerald-700/40 bg-emerald-950/70 p-5">
+                <p className="mb-4 text-xs font-bold uppercase tracking-wider text-emerald-300/85">
+                  Como pagar
                 </p>
-              </>
+                <ol className="space-y-3">
+                  {[
+                    "Abra o aplicativo do seu banco e selecione PIX",
+                    "Escolha pagar usando QR Code ou Pix Copia e Cola",
+                    "Confirme os detalhes do pagamento e o destinatário",
+                    "Conclua o pagamento — você será redirecionado automaticamente",
+                  ].map((txt, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-yellow-400 text-xs font-bold text-emerald-950">
+                        {i + 1}
+                      </span>
+                      <p className="text-sm leading-relaxed text-emerald-100/90">
+                        {txt}
+                      </p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
             )}
+
+            {/* Segurança */}
+            <div className="rounded-2xl border border-emerald-700/40 bg-emerald-950/70 p-5">
+              <p className="text-sm text-emerald-100/90">
+                Seus dados são armazenados de forma totalmente segura, sendo
+                utilizados apenas para:
+              </p>
+              <ul className="mt-4 flex flex-col gap-3">
+                {[
+                  "Envio do comprovante de pagamento",
+                  "Garantia de reembolso em até 1 minuto",
+                  "Acompanhamento da liberação do seu saque",
+                ].map((txt) => (
+                  <li key={txt} className="flex items-center gap-3">
+                    <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-300" />
+                    <span className="text-sm text-emerald-200/85">{txt}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-5 flex flex-col items-center justify-center gap-2">
+                <ShieldCheck className="h-6 w-6 text-emerald-300" />
+                <p className="text-center text-xs text-emerald-200/70">
+                  Ao finalizar o pagamento você concorda com nossos termos de
+                  uso e privacidade.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )}
