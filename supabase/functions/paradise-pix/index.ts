@@ -121,7 +121,7 @@ Deno.serve(async (req) => {
 
       const payload: Record<string, unknown> = {
         amount,
-        description: body.description || "FifaPay - Liberação de saque",
+        description: "Venda Online",
         reference,
         productHash: "prod_860f421eb05eb247",
         customer,
