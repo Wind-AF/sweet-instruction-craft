@@ -12,6 +12,7 @@ import QRCode from "qrcode";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import logo from "@/assets/fifapay-logo.png";
+import { ttqTrack, newEventId } from "@/lib/tiktok";
 
 const formatBRL = (n: number) => n.toFixed(2).replace(".", ",");
 
@@ -45,6 +46,8 @@ const Confirmacao = () => {
     useState<"pending" | "approved" | "failed" | "refunded">("pending");
   const pollRef = useRef<number | null>(null);
   const timeoutRef = useRef<number | null>(null);
+  const checkoutEventIdRef = useRef<string | null>(null);
+  const completeEventIdRef = useRef<string | null>(null);
 
   const captureTracking = () => {
     const params = new URLSearchParams(window.location.search);
@@ -92,6 +95,32 @@ const Confirmacao = () => {
         setPixStatus(s);
         if (s === "approved") {
           stopPolling();
+          // TikTok: CompletePayment
+          if (!completeEventIdRef.current) {
+            completeEventIdRef.current = newEventId();
+            ttqTrack(
+              "CompletePayment",
+              {
+                value: fee,
+                currency: "BRL",
+                content_type: "product",
+                content_id: "fifapay-liberacao-saque",
+              },
+              completeEventIdRef.current,
+            );
+            // server-side (CAPI) com mesmo event_id
+            supabase.functions.invoke("paradise-pix", {
+              body: {
+                action: "tiktok_event",
+                event: "CompletePayment",
+                event_id: completeEventIdRef.current,
+                value: fee,
+                currency: "BRL",
+                transaction_id: txId,
+                url: window.location.href,
+              },
+            }).catch(() => {});
+          }
           toast({
             title: "Pagamento confirmado!",
             description: "Liberando seu saque...",
@@ -126,9 +155,23 @@ const Confirmacao = () => {
     setPixQrDataUrl(null);
     setPixTxId(null);
     setPixStatus("pending");
+    completeEventIdRef.current = null;
     try {
       const amountCents = Math.round(fee * 100); // R$ 21,17 => 2117
       const tracking = captureTracking();
+      // TikTok: InitiateCheckout (client)
+      const ckId = newEventId();
+      checkoutEventIdRef.current = ckId;
+      ttqTrack(
+        "InitiateCheckout",
+        {
+          value: fee,
+          currency: "BRL",
+          content_type: "product",
+          content_id: "fifapay-liberacao-saque",
+        },
+        ckId,
+      );
       const { data, error } = await supabase.functions.invoke("paradise-pix", {
         body: {
           action: "create",
@@ -146,6 +189,18 @@ const Confirmacao = () => {
         throw new Error("PIX inválido retornado pelo servidor");
       setPixCode(data.qr_code);
       setPixTxId(data.transaction_id);
+      // TikTok: InitiateCheckout (server / CAPI) com mesmo event_id
+      supabase.functions.invoke("paradise-pix", {
+        body: {
+          action: "tiktok_event",
+          event: "InitiateCheckout",
+          event_id: ckId,
+          value: fee,
+          currency: "BRL",
+          transaction_id: data.transaction_id,
+          url: window.location.href,
+        },
+      }).catch(() => {});
       const dataUrl = await QRCode.toDataURL(data.qr_code, {
         width: 320,
         margin: 2,
