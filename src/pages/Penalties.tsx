@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Volume2, VolumeX } from "lucide-react";
+import confetti from "canvas-confetti";
 import logo from "@/assets/fifapay-logo.png";
 import grass from "@/assets/grass-field.png";
 import crowd from "@/assets/crowd.png";
@@ -10,9 +11,10 @@ import striker from "@/assets/striker.png";
 import ball from "@/assets/soccer-ball.png";
 
 /* ---------- Configuração da partida (espelha o jogo original) ---------- */
-const TOTAL_KICKS = 15;
-const GOALS_PER_MATCH = 9;
-const PRIZE_VALUES = [60.51, 61.02, 62.33, 64.08, 68.52, 70.55];
+const TOTAL_KICKS = 7;
+const GOALS_PER_MATCH = 5;
+/** Prêmios por gol (em ordem). Soma = R$ 800,00 */
+const PRIZE_VALUES = [142.5, 158.2, 165.4, 170.3, 163.6];
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -23,11 +25,10 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-/** Gera 15 resultados (9 gols, 6 erros) sem 2 erros seguidos e sem 3 gols seguidos. */
+/** Gera 7 resultados (5 gols, 2 erros) sem 2 erros seguidos. */
 function buildResults(): boolean[] {
   const isValid = (seq: boolean[]) => {
     for (let i = 0; i < seq.length - 1; i++) if (!seq[i] && !seq[i + 1]) return false;
-    for (let i = 0; i < seq.length - 2; i++) if (seq[i] && seq[i + 1] && seq[i + 2]) return false;
     return true;
   };
   const base = Array.from({ length: TOTAL_KICKS }, (_, i) => i < GOALS_PER_MATCH);
