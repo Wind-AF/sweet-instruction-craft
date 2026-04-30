@@ -57,10 +57,13 @@ const sideOf = (x: number): "left" | "center" | "right" =>
   x < 38 ? "left" : x > 62 ? "right" : "center";
 
 /* Posição de pulo do goleiro (em % do gol) por lado */
-const KEEPER_POSE: Record<"left" | "center" | "right", { x: number; rot: number }> = {
-  left: { x: 22, rot: -22 },
-  center: { x: 50, rot: 0 },
-  right: { x: 78, rot: 22 },
+const KEEPER_POSE: Record<
+  "left" | "center" | "right",
+  { x: number; y: number; rot: number }
+> = {
+  left:   { x: 22, y: 48, rot: -28 },
+  center: { x: 50, y: 40, rot: 0 },
+  right:  { x: 78, y: 48, rot: 28 },
 };
 
 const Penalties = () => {
@@ -80,6 +83,7 @@ const Penalties = () => {
   const [aim, setAim] = useState<{ x: number; y: number } | null>(null);
   const [ballPos, setBallPos] = useState<{ x: number; y: number }>({ x: 50, y: 88 });
   const [keeperSide, setKeeperSide] = useState<"left" | "center" | "right">("center");
+  const [keeperDiving, setKeeperDiving] = useState(false);
   const [flash, setFlash] = useState<"goal" | "miss" | null>(null);
   const [shake, setShake] = useState(false);
   const [floatPrize, setFloatPrize] = useState<number | null>(null);
@@ -140,6 +144,7 @@ const Penalties = () => {
 
       // dispara movimento da bola e pulo do goleiro juntos
       setKeeperSide(finalSide);
+      setKeeperDiving(true);
       setBallPos(finalPos);
 
       // 700ms depois: resultado
@@ -185,6 +190,7 @@ const Penalties = () => {
             setAim(null);
             setBallPos({ x: 50, y: 88 });
             setKeeperSide("center");
+            setKeeperDiving(false);
             setPhase("aiming");
           }
         }, 1600);
@@ -201,6 +207,7 @@ const Penalties = () => {
     setAim(null);
     setBallPos({ x: 50, y: 88 });
     setKeeperSide("center");
+    setKeeperDiving(false);
     setFlash(null);
     setFloatPrize(null);
     setPhase("aiming");
