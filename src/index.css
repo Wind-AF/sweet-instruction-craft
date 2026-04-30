@@ -176,4 +176,11 @@ All colors MUST be HSL.
     100% { transform: translate(-50%, -60px); opacity: 0; }
   }
   .animate-float-up { animation: float-up 1.6s ease-out forwards; }
+
+  @keyframes keeper-dive {
+    0%   { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+    35%  { transform: translate(-50%, -78%) rotate(0deg) scale(1.02); }
+    100% { transform: translate(var(--keeper-tx, -50%), var(--keeper-ty, -50%)) rotate(var(--keeper-rot, 0deg)) scale(1); }
+  }
+  .animate-keeper-dive { animation: keeper-dive 0.55s cubic-bezier(.4,1.2,.6,1) forwards; }
 }
