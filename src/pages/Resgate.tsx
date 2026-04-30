@@ -317,6 +317,8 @@ const Resgate = () => {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value.slice(0, 100))}
                   placeholder="Como no documento"
+                  autoComplete="name"
+                  autoCapitalize="words"
                   className="mb-4 w-full rounded-xl border border-emerald-700/60 bg-emerald-900/50 px-3 py-3 text-sm font-medium text-white placeholder:text-emerald-500/60 focus:border-yellow-400/50 focus:outline-none focus:ring-2 focus:ring-yellow-400/30"
                 />
 
@@ -371,6 +373,9 @@ const Resgate = () => {
                       value={pixKey}
                       onChange={(e) => setPixKey(e.target.value.slice(0, 80))}
                       placeholder={placeholderByType[pixType]}
+                      inputMode={pixType === "CPF" || pixType === "Celular" ? "numeric" : pixType === "E-mail" ? "email" : "text"}
+                      autoComplete={pixType === "E-mail" ? "email" : pixType === "Celular" ? "tel" : "off"}
+                      autoCapitalize="off"
                       className="mb-4 w-full rounded-xl border border-emerald-700/60 bg-emerald-900/50 px-3 py-3 text-sm font-medium text-white placeholder:text-emerald-500/60 focus:border-yellow-400/50 focus:outline-none focus:ring-2 focus:ring-yellow-400/30"
                     />
                   </>
