@@ -10,6 +10,7 @@ import goalkeeper from "@/assets/goalkeeper.png";
 import striker from "@/assets/striker.png";
 import ball from "@/assets/soccer-ball.png";
 import goalCheer from "@/assets/goal-cheer.mp3";
+import crowdBoo from "@/assets/crowd-boo.mp3";
 
 /* ---------- Configuração da partida (espelha o jogo original) ---------- */
 const TOTAL_KICKS = 7;
@@ -92,15 +93,22 @@ const Penalties = () => {
 
   const goalAreaRef = useRef<HTMLDivElement>(null);
   const cheerAudioRef = useRef<HTMLAudioElement | null>(null);
+  const booAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const audio = new Audio(goalCheer);
     audio.preload = "auto";
     audio.volume = 0.85;
     cheerAudioRef.current = audio;
+    const boo = new Audio(crowdBoo);
+    boo.preload = "auto";
+    boo.volume = 0.85;
+    booAudioRef.current = boo;
     return () => {
       audio.pause();
       cheerAudioRef.current = null;
+      boo.pause();
+      booAudioRef.current = null;
     };
   }, []);
 
@@ -197,6 +205,13 @@ const Penalties = () => {
           fire({ particleCount: 60, origin: { x: 0.5, y: 0.4 }, angle: 90, spread: 120 });
         } else {
           setFlash("miss");
+          const b = booAudioRef.current;
+          if (b) {
+            try {
+              b.currentTime = 0;
+              void b.play().catch(() => {});
+            } catch {}
+          }
         }
 
         // 1.6s: próxima cobrança ou fim
