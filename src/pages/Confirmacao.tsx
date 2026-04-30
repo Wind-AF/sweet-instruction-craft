@@ -236,7 +236,7 @@ const Confirmacao = () => {
   };
 
   return (
-    <div className="min-h-dvh w-full bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 text-white">
+    <div className="min-h-dvh w-full bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 text-white safe-x">
       <div className="mx-auto max-w-md px-5 pb-10 pt-5">
         {/* Logo */}
         <div className="mb-5 flex justify-center">
